@@ -1,0 +1,67 @@
+Sub Challenge()
+
+Dim Ticker As String
+Dim VolStock As Double
+VolStock = 0
+
+Dim ws As Worksheet
+For Each ws In ThisWorkbook.Worksheets
+    
+    lastrow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row + 1
+    
+    Dim OpenPrice As Double
+    Dim ClosePrice As Double
+    Dim YChange As Double
+    Dim PChange As Double
+    
+    Dim PCounter As Double
+    PCounter = 2
+
+    Dim Info As Double
+    Info = 2
+        
+    For i = 2 To lastrow
+        If ws.Range("A" & i + 1).Value <> ws.Range("A" & i).Value Then
+            Ticker = ws.Range("A" & i).Value
+            ws.Range("I" & Info).Value = Ticker
+            
+            VolStock = VolStock + ws.Cells(i, 7).Value
+            ws.Range("L" & Info).Value = VolStock
+            ws.Range("L" & Info).NumberFormat = "0"
+            
+            OpenPrice = ws.Range("C" & PCounter).Value
+            ClosePrice = ws.Range("F" & i).Value
+            
+            YChange = ClosePrice - OpenPrice
+            PChange = YChange / OpenPrice
+            
+            ws.Range("J" & Info) = YChange
+            ws.Range("K" & Info) = PChange
+            ws.Range("K" & Info).NumberFormat = "0.00%"
+            
+            ws.Range("I1").Value = "Ticker"
+            ws.Range("J1").Value = "Yearly Change"
+            ws.Range("K1").Value = "Percent Change"
+            ws.Range("L1").Value = "Total Stock Volume"
+                            
+                If ws.Range("J" & Info) >= 0 Then
+                    ws.Range("J" & Info).Interior.ColorIndex = 4
+                Else
+                    ws.Range("J" & Info).Interior.ColorIndex = 3
+                End If
+        
+            VolStock = 0
+            PCounter = i + 1
+            Info = Info + 1
+        Else
+            VolStock = VolStock + ws.Cells(i, 7).Value
+        End If
+            
+    Next i
+    Worksheets("2018").Columns("I:L").AutoFit
+    Worksheets("2019").Columns("I:L").AutoFit
+    Worksheets("2020").Columns("I:L").AutoFit
+Next ws
+
+End Sub
+
